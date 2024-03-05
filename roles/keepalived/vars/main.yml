@@ -15,3 +15,8 @@ rs01_port: "80"
 rs02_ip: "192.168.56.22"
 rs02_port: "80"
 
+loopback_first_ip: "192.168.56.33"
+loopback_first_port: "32"
+
+loopback_second_ip: "192.168.56.34"
+loopback_second_port: "32"

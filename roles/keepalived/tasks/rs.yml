@@ -16,24 +16,12 @@
 - name: Add line
   ansible.builtin.shell: echo 1 > /proc/sys/net/ipv4/conf/all/arp_ignore && echo 1 > /proc/sys/net/ipv4/conf/lo/arp_ignore && echo 2 > /proc/sys/net/ipv4/conf/all/arp_announce && echo 2 > /proc/sys/net/ipv4/conf/lo/arp_announce
 
-#- name: Add line arp_ignore
-#  ansible.builtin.lineinfile:
-#    dest: '{{ item }}'
-#    line: 1
-#  with_items: 
-#    - "/proc/sys/net/ipv4/conf/all/arp_ignore"
-#    - "/proc/sys/net/ipv4/conf/lo/arp_ignore"
-#  become: true
-#  
-#- name: Add line arp_anounce
-#  ansible.builtin.lineinfile:
-#    dest: '{{ item }}'
-#    line: 2
-#  with_items: 
-#    - "/proc/sys/net/ipv4/conf/all/arp_announce"
-#    - "/proc/sys/net/ipv4/conf/lo/arp_announce"
-  
+- name: Check loopback ip
+  ansible.builtin.command: "ip -4 -br a show dev lo"
+  register: ip_check
 
 - name: RS loopback settings
-  ansible.builtin.shell: ip a a 192.168.56.33/32 dev lo && ip a a 192.168.56.34/32 dev lo
-  tags: add_loopback
+  ansible.builtin.shell: ip a a {{ loopback_first_ip }}/{{ loopback_first_port }} dev lo && ip a a {{ loopback_second_ip }}/{{ loopback_second_port }} dev lo
+  when: "(loopback_first_ip | string) and (loopback_second_ip | string) not in ip_check.stdout"
+
+
