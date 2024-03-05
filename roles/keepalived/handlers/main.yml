@@ -1,0 +1,28 @@
+---
+- name: Manage apache2
+  systemd:
+    name: apache2
+    state: restarted
+    enabled: yes
+  listen: restart_apache
+
+- name: Manage rsyslog
+  systemd:
+    name: rsyslog
+    state: restarted
+    enabled: yes
+  listen: restart_rsyslog
+
+- name: Manage haproxy
+  systemd:
+    name: haproxy
+    state: restarted
+    enabled: yes
+  listen: restart_haproxy
+
+- name: Manage keepalived
+  systemd:
+    name: keepalived
+    state: restarted
+    enabled: yes
+  listen: restart_keepalived

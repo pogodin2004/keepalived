@@ -1,0 +1,17 @@
+---
+keepalived_iface: "enp0s8"
+
+lvs01_ip: "192.168.56.33"
+lvs01_port: "80"
+lvs01_mask: "24"
+
+lvs02_ip: "192.168.56.34"
+lvs02_port: "80"
+lvs02_mask: "24"
+
+rs01_ip: "192.168.56.21"
+rs01_port: "80"
+
+rs02_ip: "192.168.56.22"
+rs02_port: "80"
+

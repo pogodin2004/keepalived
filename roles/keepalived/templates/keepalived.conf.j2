@@ -1,0 +1,97 @@
+global_defs {
+  router_id {% if inventory_hostname == "lvs01" %}lvs01{% else %}lvs02{% endif %}
+
+  script_user root
+  enable_script_security
+}
+
+vrrp_instance ip1 {
+    state {% if inventory_hostname == "lvs01" %}MASTER{% else %}BACKUP{% endif %}
+    
+    interface {{ keepalived_iface }}
+    virtual_router_id 33
+    priority {% if inventory_hostname == "lvs01" %}150{% else %}99{% endif %}
+
+    advert_int 1
+    virtual_ipaddress {
+        {{ lvs01_ip }}/{{ lvs01_mask }}
+    }
+    notify "/etc/keepalived/notify.sh"
+}
+
+vrrp_instance ip2 {
+    state {% if inventory_hostname == "lvs01" %}BACKUP{% else %}MASTER{% endif %}
+    
+    interface {{ keepalived_iface }}
+    virtual_router_id 34
+    priority {% if inventory_hostname == "lvs01" %}99{% else %}150{% endif %}
+
+    advert_int 1
+    virtual_ipaddress {
+        {{ lvs02_ip }}/{{ lvs02_mask }}
+    }
+    notify "/etc/keepalived/notify.sh"
+  }
+}
+
+virtual_server {{ lvs01_ip }} {{ lvs01_port }} {
+    delay_loop 10
+    lb_algo rr
+    lb_kind DR
+    protocol TCP
+    real_server {{ rs01_ip }} {{ rs01_port }} {
+        weight 1
+        HTTP_GET {
+            url {
+              path /
+              status_code 200
+            }
+            connection_timeout 3
+            retry 2
+            delay_before_retry 2
+        }
+    }
+    real_server {{ rs02_ip }} {{ rs02_port }} {
+        weight 2
+        HTTP_GET {
+            url {
+              path /
+              status_code 200
+            }
+            connection_timeout 3
+            retry 2
+            delay_before_retry 2
+        }
+    }
+}
+
+virtual_server {{ lvs02_ip }} {{ lvs02_port }} {
+    delay_loop 10
+    lb_algo rr
+    lb_kind DR
+    protocol TCP
+    real_server {{ rs01_ip }} {{ rs01_port }} {
+        weight 1
+        HTTP_GET {
+            url {
+              path /
+              status_code 200
+            }
+            connection_timeout 3
+            retry 2
+            delay_before_retry 2
+        }
+    }
+    real_server {{ rs02_ip }} {{ rs02_port }} {
+        weight 2
+        HTTP_GET {
+            url {
+              path /
+              status_code 200
+            }
+            connection_timeout 3
+            retry 2
+            delay_before_retry 2
+        }
+    }
+}

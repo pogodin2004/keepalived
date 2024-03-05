@@ -1,0 +1,38 @@
+- name: Install keepalived
+  ansible.builtin.package:
+    name: keepalived
+    state: present
+
+- name: Copy notify script
+  ansible.builtin.template:
+    src: notify.sh.j2
+    dest: /etc/keepalived/notify.sh
+    mode: '755'
+    owner: root
+    group: root
+
+- name: Template keepalived config
+  ansible.builtin.template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    group: root
+    mode: '644'
+  notify: restart_keepalived
+
+- name: Configure vrrp in rsyslog
+  ansible.builtin.copy:
+    src: rsyslog.d/10-keepalived.conf
+    dest: /etc/rsyslog.d/10-keepalived.conf
+    mode: '0444'
+    owner: root
+    group: root
+  notify: restart_rsyslog
+
+- name: Configure vrrp in logrotate
+  ansible.builtin.copy:
+    src: logrotate.d/keepalived
+    dest: /etc/logrotate.d/10-keepalived.conf
+    mode: '0444'
+    owner: root
+    group: root

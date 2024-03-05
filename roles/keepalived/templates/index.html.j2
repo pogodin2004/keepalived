@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <title>Webseite</title>
+        <style>
+                body {
+                        background-color: #b85dff;
+                }
+                h1 {
+                        text-align: center;
+                        font-size: 3em;
+                        color: white;
+                        margin-top: 50px;
+                }
+                .text {
+                        text-align: center;
+                        font-size: 2em;
+                        color: #03779F;
+                        margin-top: 50px;
+                }
+        </style>
+</head>
+<body>
+        <h1>{% if inventory_hostname == "rs01" %}Web01{% else %}Web02{% endif %}</h1>
+        <div class="text">{% if inventory_hostname == "rs01" %}HOST1{% else %}HOST2{% endif %}</div>
+</body>
+</html>
+

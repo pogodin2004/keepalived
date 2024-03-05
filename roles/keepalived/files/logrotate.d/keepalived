@@ -1,0 +1,6 @@
+/var/log/keepalived.log {
+        weekly
+        rotate 8
+        compress
+        delay
+}

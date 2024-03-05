@@ -1,0 +1,28 @@
+#!/bin/bash
+
+TYPE=$1
+NAME=$2
+ENDSTATE=$3
+IFACE={{ keepalived_iface }} # Replace with your interface
+
+case $ENDSTATE in
+    "BACKUP") # Perform action for transition to BACKUP state
+       ipvsadm --start-daemon backup --syncid {% if inventory_hostname == "lvs01" %}2{% else %}1{% endif %} --mcast-interface=$IFACE
+              exit 0
+              ;;
+    "FAULT")  # Perform action for transition to FAULT state
+              exit 0
+              ;;
+    "STOP")  # Perform action for transition to STOP state
+       ipvsadm --stop-daemon master
+       ipvsadm --stop-daemon backup
+              exit 0
+              ;;
+    "MASTER") # Perform action for transition to MASTER state
+       ipvsadm --start-daemon master --syncid {% if inventory_hostname == "lvs01" %}1{% else %}2{% endif %} --mcast-interface=$IFACE
+              exit 0
+              ;;
+    *)        echo "Unknown state ${ENDSTATE}"
+              exit 1
+              ;;
+esac

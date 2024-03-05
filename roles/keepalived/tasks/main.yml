@@ -1,0 +1,17 @@
+---
+- name: Apt update
+  ansible.builtin.apt:
+    update_cache: yes
+  tags: update
+
+- name: RS tasks
+  include_tasks:
+    file: rs.yml
+  when: inventory_hostname == "rs01" or inventory_hostname == "rs02" 
+  tags: rs
+
+- name: LVS tasks
+  include_tasks:
+    file: lvs.yml
+  when: inventory_hostname == "lvs01" or inventory_hostname == "lvs02" 
+  tags: lvs
